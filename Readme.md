@@ -6,6 +6,8 @@ Nexus doesn't provide an official image to run on Raspberry Pi.
 
 So I'm creating one and sharing it with everyone :-) .
 
+This is a fork from the work done by klo2k. See the upstream at https://github.com/klo2k/nexus3-docker
+
 (For x64, use the official image - [sonatype/nexus3](https://hub.docker.com/r/sonatype/nexus3/))
 
 
@@ -14,10 +16,23 @@ So I'm creating one and sharing it with everyone :-) .
 ## Running
 
 ```bash
-docker run -d -p 8081:8081 --name nexus klo2k/nexus3
+docker run -d -p 8081:8081 --name nexus hartraft/nexus3
 ```
 
 
+Running with persistent storage
+```bash
+docker volume create --name nexus-data
+docker run -d -p 8081:8081 --name nexus -v nexus-data:/nexus-data hartraft/nexus3
+```
+
+
+Running with persistent storage from a mounted host directory
+```bash
+mkdir ~/nexus-data && chown -R 200 ~/nexus-data
+docker run -d -p 8081:8081 --name nexus -v ~/nexus-data:/nexus-data hartraft/nexus3
+
+```
 
 
 ## Building with "docker buildx" locally
@@ -41,7 +56,7 @@ Build ARM 32-bit (armv7l):
 ```bash
 docker buildx build --pull \
   --platform "linux/arm/v7" \
-  --tag "klo2k/nexus3" \
+  --tag "hartraft/nexus3" \
   --output=type=docker \
   .
 ```
@@ -51,7 +66,7 @@ Build ARM 64-bit (aarch64):
 ```bash
 docker buildx build --pull \
   --platform "linux/arm64" \
-  --tag "klo2k/nexus3" \
+  --tag "hartraft/nexus3" \
   --output=type=docker \
   .
 ```
